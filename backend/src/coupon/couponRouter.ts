@@ -1,9 +1,9 @@
 import { Router } from "express";
-import { handleGetAllProducts } from "./productController.js";
+import { getAllProducts } from "./couponController.js";
 
 const router = Router();
 
-router.route("/").get(handleGetAllProducts);
+router.route("/").get(getAllProducts);
 // router.route("/").get(getAllProducts).post();
 
 // router.route("/:id").put().delete();
