@@ -1,12 +1,11 @@
 import { Request, Response, NextFunction } from "express";
 import {
-  Product,
   getProductFromRequest,
   getProductArrayFromQueryResult,
+  getErrorsWithProduct,
 } from "../model/product.js";
 import { ProductQueries } from "./productQueries.js";
 import pool from "../config/dbConfig.js";
-// import { PoolClient, QueryResult } from "pg";
 
 export async function getProduct(
   req: Request,
@@ -17,22 +16,22 @@ export async function getProduct(
   if (!id) {
     res.status(200).json({
       status: "fail",
-      data: "ID required",
+      message: "ID required",
     });
   }
 
   try {
-    pool.query(ProductQueries.getProduct, (error, result) => {
+    pool.query(ProductQueries.getProduct, [id], (error, result) => {
       if (!result) {
         res.status(200).json({
           status: "fail",
-          data: error.message,
+          message: error.message,
         });
       }
 
       res.status(200).json({
         status: "success",
-        data: getProductArrayFromQueryResult(result) || [],
+        data: getProductArrayFromQueryResult(result)[0] || [],
       });
     });
   } catch (error) {
@@ -50,7 +49,7 @@ export async function getAllProducts(
       if (!result) {
         res.status(200).json({
           status: "fail",
-          data: error.message,
+          message: error.message,
         });
       }
 
@@ -64,32 +63,6 @@ export async function getAllProducts(
   }
 }
 
-export function getErrorsWithProduct(product: Product): string[] {
-  let errors: string[] = [];
-
-  if (!product.tag || product.tag.length == 0) {
-    errors.push("Tag não pode ser vazia");
-  }
-
-  if (product.tag.length > 100) {
-    errors.push("Tag muito longa");
-  }
-
-  if (!product.price || product.price == 0) {
-    errors.push("O produto precisa de um preço");
-  }
-
-  if (product.price < 0) {
-    errors.push("O preço deve ser um número positivo");
-  }
-
-  if (product.stock < 0) {
-    errors.push("O estoque deve ser um número positivo");
-  }
-
-  return errors;
-}
-
 export async function insertProduct(
   req: Request,
   res: Response,
@@ -100,7 +73,7 @@ export async function insertProduct(
   if (errors.length > 0) {
     res.status(200).json({
       status: "fail",
-      data: errors,
+      message: errors,
     });
   }
 
@@ -112,7 +85,7 @@ export async function insertProduct(
         if (!result) {
           res.status(200).json({
             status: "fail",
-            data: error.message,
+            message: error.message,
           });
         }
 
@@ -122,6 +95,83 @@ export async function insertProduct(
         });
       }
     );
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function updateProduct(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  const id: number = parseInt(req.params.id);
+  if (!id) {
+    res.status(200).json({
+      status: "fail",
+      message: "ID required",
+    });
+  }
+
+  const product = getProductFromRequest(req);
+  const errors: string[] = getErrorsWithProduct(product);
+  if (errors.length > 0) {
+    res.status(200).json({
+      status: "fail",
+      message: errors,
+    });
+  }
+
+  try {
+    pool.query(
+      ProductQueries.updateProduct,
+      [id, product.tag, product.price, product.stock],
+      (error, result) => {
+        if (!result) {
+          res.status(200).json({
+            status: "fail",
+            message: error.message,
+          });
+        }
+
+        res.status(200).json({
+          status: "success",
+          data: result.rows || [],
+        });
+      }
+    );
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function deleteProduct(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  const id: number = parseInt(req.params.id);
+  if (!id) {
+    res.status(200).json({
+      status: "fail",
+      message: "ID required",
+    });
+  }
+
+  try {
+    pool.query(ProductQueries.deleteProduct, [id], (error, result) => {
+      if (!result) {
+        res.status(200).json({
+          status: "fail",
+          message: error.message,
+        });
+      }
+
+      res.status(200).json({
+        status: "success",
+        data: result.rows || [],
+      });
+    });
   } catch (error) {
     next(error);
   }

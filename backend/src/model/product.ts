@@ -41,3 +41,29 @@ export function getProductFromRequest(req: Request) {
 export function getEmptyProduct() {
   return new Product(0, "", 0, 0);
 }
+
+export function getErrorsWithProduct(product: Product): string[] {
+  let errors: string[] = [];
+
+  if (!product.tag || product.tag.length == 0) {
+    errors.push("Tag não pode ser vazia");
+  }
+
+  if (product.tag.length > 100) {
+    errors.push("Tag muito longa");
+  }
+
+  if (!product.price || product.price == 0) {
+    errors.push("O produto precisa de um preço");
+  }
+
+  if (product.price < 0) {
+    errors.push("O preço deve ser um número positivo");
+  }
+
+  if (product.stock < 0) {
+    errors.push("O estoque deve ser um número positivo");
+  }
+
+  return errors;
+}

@@ -1,6 +1,5 @@
-import { expect, test, describe, afterEach, beforeEach } from "vitest";
-import { getErrorsWithProduct } from "../product/productController.js";
-import { Product, getEmptyProduct } from "../model/product.js";
+import { expect, test, describe, beforeEach } from "vitest";
+import { Product, getEmptyProduct, getErrorsWithProduct } from "../model/product.js";
 
 function resetProduct(product: Product) {
   product.id = 0;

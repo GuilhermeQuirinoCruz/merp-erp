@@ -8,7 +8,7 @@ app.get("/", (req, res) => {
 });
 
 // Routes
-const BASE_URL: string = "/api";
+const BASE_URL: string = "/api/v1";
 
 import productRoutes from "./product/productRouter.js";
 app.use(BASE_URL + "/product", productRoutes);
