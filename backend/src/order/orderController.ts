@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import pool from "../config/dbConfig.js";
 
-export const getAllProducts = function (
+export const getAllCoupons = function (
   req: Request,
   res: Response,
   next: NextFunction

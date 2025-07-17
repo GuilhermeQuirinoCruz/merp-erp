@@ -4,7 +4,7 @@
   "main": "index.ts",
   "type": "module",
   "scripts": {
-    "dev": "tsc && node ./dist/index.js --env-file=../.env",
+    "dev": "tsc && node ./dist/index.js",
     "test": "vitest run",
     "coverage": "vitest run --coverage",
     "build": "tsc"

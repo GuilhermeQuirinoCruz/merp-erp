@@ -1,10 +1,9 @@
 import { Router } from "express";
-import { handleGetAllProducts } from "./productController.js";
+import { getAllProducts, insertProduct } from "./productController.js";
 
 const router = Router();
 
-router.route("/").get(handleGetAllProducts);
-// router.route("/").get(getAllProducts).post();
+router.route("/").get(getAllProducts).post(insertProduct);
 
 // router.route("/:id").put().delete();
 
